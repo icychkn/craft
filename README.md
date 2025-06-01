@@ -67,7 +67,7 @@ The server is written in Python but requires a compiled DLL so it can perform
 the terrain generation just like the client.
 
 ```bash
-    gcc -std=c99 -O3 -shared -o world -I src -I deps/noise deps/noise/noise.c src/world.c
+    sh ./build-server.py
     python2 ./server.py [HOST] [PORT]
 ```
 
