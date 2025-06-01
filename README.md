@@ -19,6 +19,8 @@ The local GLFW, GLEW, and sqlite libraries are replaced by system-wide versions.
 Due to issues with TCC neither including an execstack or disabling it, gcc must
 be used to build the server's world binary so Python's CDLL function may use it.
 
+The server python script has been updated to Python 3.
+
 ### Features
 
 * Simple but nice looking terrain generation using perlin / simplex noise.
@@ -68,7 +70,7 @@ the terrain generation just like the client.
 
 ```bash
     sh ./build-server.py
-    python2 ./server.py [HOST] [PORT]
+    python3 ./server.py [HOST] [PORT]
 ```
 
 ### Multiplayer
