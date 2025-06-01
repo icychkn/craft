@@ -6,6 +6,19 @@ http://www.michaelfogleman.com/craft/
 
 ![Screenshot](https://i.imgur.com/SH7wcas.png)
 
+### Fork Details
+
+This fork is for personal experimentation, mainly to learn how much the original
+codebase can be factored and simplified.
+
+Build system is stripped down to a single shell script targeting Linux with
+OpenGL, GLFW, and GLEW using tcc as the compiler.
+
+The local GLFW, GLEW, and sqlite libraries are replaced by system-wide versions.
+
+Due to issues with TCC neither including an execstack or disabling it, gcc must
+be used to build the server's world binary so Python's CDLL function may use it.
+
 ### Features
 
 * Simple but nice looking terrain generation using perlin / simplex noise.
@@ -26,42 +39,37 @@ See below to run from source.
 
 ### Install Dependencies
 
-#### Mac OS X
+### Linux (Arch)
 
-Download and install [CMake](http://www.cmake.org/cmake/resources/software.html)
-if you don't already have it. You may use [Homebrew](http://brew.sh) to simplify
-the installation:
-
-    brew install cmake
-
-#### Linux (Ubuntu)
-
-    sudo apt-get install cmake libglew-dev xorg-dev libcurl4-openssl-dev
-    sudo apt-get build-dep glfw
-
-#### Windows
-
-Download and install [CMake](http://www.cmake.org/cmake/resources/software.html)
-and [MinGW](http://www.mingw.org/). Add `C:\MinGW\bin` to your `PATH`.
-
-Download and install [cURL](http://curl.haxx.se/download.html) so that
-CURL/lib and CURL/include are in your Program Files directory.
-
-Use the following commands in place of the ones described in the next section.
-
-    cmake -G "MinGW Makefiles"
-    mingw32-make
+  sudo pacman -S curl glew glfw sqlite tcc
+  (note: unknown why xorg-dev was included in original README)
 
 ### Compile and Run
 
-Once you have the dependencies (see above), run the following commands in your
-terminal.
+  Once you have the dependencies (see above), run the following commands in your
+  terminal.
 
-    git clone https://github.com/fogleman/Craft.git
-    cd Craft
-    cmake .
-    make
+```bash
+    git clone https://github.com/icychkn/craft.git
+    cd craft
+```
+
+#### Client
+
+```bash
+    sh ./build.sh
     ./craft
+```
+
+#### Server
+
+The server is written in Python but requires a compiled DLL so it can perform
+the terrain generation just like the client.
+
+```bash
+    gcc -std=c99 -O3 -shared -o world -I src -I deps/noise deps/noise/noise.c src/world.c
+    python2 ./server.py [HOST] [PORT]
+```
 
 ### Multiplayer
 
@@ -78,17 +86,6 @@ You can connect to a server with command line arguments...
 Or, with the "/online" command in the game itself.
     
     /online [HOST [PORT]]
-
-#### Server
-
-You can run your own server or connect to mine. The server is written in Python
-but requires a compiled DLL so it can perform the terrain generation just like
-the client.
-
-```bash
-gcc -std=c99 -O3 -fPIC -shared -o world -I src -I deps/noise deps/noise/noise.c src/world.c
-python server.py [HOST [PORT]]
-```
 
 ### Controls
 
