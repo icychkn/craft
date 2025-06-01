@@ -1,12 +1,10 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <curl/curl.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include "auth.h"
 #include "client.h"
 #include "config.h"
 #include "cube.h"
@@ -1814,16 +1812,8 @@ void login() {
     char access_token[128] = {0};
     if (db_auth_get_selected(username, 128, identity_token, 128)) {
         printf("Contacting login server for username: %s\n", username);
-        if (get_access_token(
-            access_token, 128, username, identity_token))
-        {
-            printf("Successfully authenticated with the login server\n");
-            client_login(username, access_token);
-        }
-        else {
-            printf("Failed to authenticate with the login server\n");
-            client_login("", "");
-        }
+        printf("Failed to authenticate with the login server\n");
+        client_login("", "");
     }
     else {
         printf("Logging in anonymously\n");
@@ -2585,7 +2575,6 @@ void reset_model() {
 
 int main(int argc, char **argv) {
     // INITIALIZATION //
-    curl_global_init(CURL_GLOBAL_DEFAULT);
     srand(time(NULL));
     rand();
 
@@ -2958,6 +2947,5 @@ int main(int argc, char **argv) {
     }
 
     glfwTerminate();
-    curl_global_cleanup();
     return 0;
 }

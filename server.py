@@ -22,8 +22,7 @@ CHUNK_SIZE = 32
 BUFFER_SIZE = 4096
 COMMIT_INTERVAL = 5
 
-AUTH_REQUIRED = True
-AUTH_URL = 'https://craft.michaelfogleman.com/api/1/access'
+AUTH_REQUIRED = False
 
 DAY_LENGTH = 600
 SPAWN_POINT = (0, 0, 0, 0, 0)
@@ -317,18 +316,9 @@ class Model(object):
         # TODO: client.start() here
     def on_authenticate(self, client, username, access_token):
         user_id = None
-        if username and access_token:
-            payload = {
-                'username': username,
-                'access_token': access_token,
-            }
-            response = requests.post(AUTH_URL, data=payload)
-            if response.status_code == 200 and response.text.isdigit():
-                user_id = int(response.text)
         client.user_id = user_id
         if user_id is None:
             client.nick = 'guest%d' % client.client_id
-            client.send(TALK, 'Visit craft.michaelfogleman.com to register!')
         else:
             client.nick = username
         self.send_nick(client)

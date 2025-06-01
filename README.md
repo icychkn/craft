@@ -43,7 +43,7 @@ See below to run from source.
 
 ### Linux (Arch)
 
-  sudo pacman -S curl glew glfw sqlite tcc
+  sudo pacman -S glew glfw sqlite tcc
   (note: unknown why xorg-dev was included in original README)
 
 ### Compile and Run
