@@ -212,7 +212,6 @@ http://0fps.wordpress.com/2013/07/03/ambient-occlusion-for-minecraft-like-worlds
 
 * GLEW is used for managing OpenGL extensions across platforms.
 * GLFW is used for cross-platform window management.
-* CURL is used for HTTPS / SSL POST for the authentication process.
 * lodepng is used for loading PNG textures.
 * sqlite3 is used for saving the blocks added / removed by the user.
 * tinycthread is used for cross-platform threading.
