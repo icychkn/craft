@@ -138,8 +138,9 @@ Player *find_player(int id) {
     return 0;
 }
 
-void update_player(Player *player,
-    float x, float y, float z, float rx, float ry, int interpolate)
+#define POS(a, b, c) float a, float b, float c
+void update_player(Player *player, POS(x, y, z),
+                   float rx, float ry, int interpolate)
 {
     if (interpolate) {
         State *s1 = &player->state1;
@@ -170,14 +171,9 @@ void interpolate_player(Player *player) {
     t1 = MIN(t1, 1);
     t1 = MAX(t1, 0.1);
     float p = MIN(t2 / t1, 1);
-    update_player(
-        player,
-        s1->x + (s2->x - s1->x) * p,
-        s1->y + (s2->y - s1->y) * p,
-        s1->z + (s2->z - s1->z) * p,
-        s1->rx + (s2->rx - s1->rx) * p,
-        s1->ry + (s2->ry - s1->ry) * p,
-        0);
+    #define INTERP_FIELD(a, b, delta, field) a->field + (b->field - a->field) * delta
+    #define INTERP(a, b, delta) INTERP_FIELD(a, b, delta, x), INTERP_FIELD(a, b, delta, y), INTERP_FIELD(a, b, delta, z), INTERP_FIELD(a, b, delta, rx), INTERP_FIELD(a, b, delta, ry)
+    update_player(player, INTERP(s1, s2, p), 0);
 }
 
 void delete_player(int id) {
@@ -322,8 +318,7 @@ int highest_block(float x, float z) {
 
 int _hit_test(
     Map *map, float max_distance, int previous,
-    float x, float y, float z,
-    float vx, float vy, float vz,
+    POS(x, y, z), POS(vx, vy, vz),
     int *hx, int *hy, int *hz)
 {
     int m = 32;
@@ -353,7 +348,7 @@ int _hit_test(
 }
 
 int hit_test(
-    int previous, float x, float y, float z, float rx, float ry,
+    int previous, POS(x, y, z), float rx, float ry,
     int *bx, int *by, int *bz)
 {
     int result = 0;
@@ -416,7 +411,7 @@ int hit_test_face(Player *player, int *x, int *y, int *z, int *face) {
     return 0;
 }
 
-int collide(int height, float *x, float *y, float *z) {
+int collide(int height, POS(*x, *y, *z)) {
     int result = 0;
     int p = chunked(*x);
     int q = chunked(*z);
@@ -459,7 +454,7 @@ int collide(int height, float *x, float *y, float *z) {
 
 int player_intersects_block(
     int height,
-    float x, float y, float z,
+    POS(x, y, z),
     int hx, int hy, int hz)
 {
     int nx = roundf(x);
@@ -474,7 +469,7 @@ int player_intersects_block(
 }
 
 int _gen_sign_buffer(
-    GLfloat *data, float x, float y, float z, int face, const char *text)
+    GLfloat *data, POS(x, y, z), int face, const char *text)
 {
     static const int glyph_dx[8] = {0, 0, -1, 1, 1, 0, -1, 0};
     static const int glyph_dz[8] = {1, -1, 0, 0, 0, -1, 0, 1};
