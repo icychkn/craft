@@ -1,3 +1,6 @@
+#ifndef STRUCTS
+#define STRUCTS
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include "config.h"
@@ -81,3 +84,4 @@ typedef struct {
   int time_changed;
   Block block0, block1, copy0, copy1;
 } Model;
+#endif
