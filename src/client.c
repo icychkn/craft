@@ -72,8 +72,8 @@ void client_login(const char *username,
                   const char *identity_token) { ONLINE_ONLY
     fmt_send("A,%s,%s\n", username, identity_token); }
 
-void client_position(float x, float y, float z, float rx, float ry) {
-    ONLINE_ONLY
+#define PRECISE_COORD(a, b, c) float a, float b, float c
+void client_position(PRECISE_COORD(x, y, z), float rx, float ry) { ONLINE_ONLY
     static float px, py, pz, prx, pry = 0;
     float distance =
         (px - x) * (px - x) +
@@ -81,9 +81,7 @@ void client_position(float x, float y, float z, float rx, float ry) {
         (pz - z) * (pz - z) +
         (prx - rx) * (prx - rx) +
         (pry - ry) * (pry - ry);
-    if (distance < 0.0001) {
-        return;
-    }
+    if (distance < 0.0001) { return; }
     px = x; py = y; pz = z; prx = rx; pry = ry;
     fmt_send("P,%.2f,%.2f,%.2f,%.2f,%.2f\n", x, y, z, rx, ry);
 }
@@ -91,21 +89,19 @@ void client_position(float x, float y, float z, float rx, float ry) {
 void client_chunk(int p, int q, int key) { ONLINE_ONLY
     fmt_send("C,%d,%d,%d\n", p, q, key); }
 
-void client_block(int x, int y, int z, int w) { ONLINE_ONLY
+#define COORD(a, b, c) int a, int b, int c
+void client_block(COORD(x, y, z), int w) { ONLINE_ONLY
     fmt_send("B,%d,%d,%d,%d\n", x, y, z, w); }
 
-void client_light(int x, int y, int z, int w) { ONLINE_ONLY
+void client_light(COORD(x, y, z), int w) { ONLINE_ONLY
     fmt_send("L,%d,%d,%d,%d\n", x, y, z, w); }
 
-void client_sign(int x, int y, int z, int face, const char *text) { ONLINE_ONLY
+void client_sign(COORD(x, y, z), int face, const char *text) { ONLINE_ONLY
     fmt_send("S,%d,%d,%d,%d,%s\n", x, y, z, face, text); }
 
 void client_talk(const char *text) { ONLINE_ONLY
-    if (strlen(text) == 0) {
-        return;
-    }
-    fmt_send("T,%s\n", text);
-}
+    if (strlen(text) == 0) { return; }
+    fmt_send("T,%s\n", text); }
 
 char *client_recv() {
     if (!client_enabled) {
