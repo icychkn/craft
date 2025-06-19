@@ -27,22 +27,14 @@ static int qsize = 0;
 static thrd_t recv_thread;
 static mtx_t mutex;
 
-void client_enable() {
-    client_enabled = 1;
-}
+#define ONLINE_ONLY if(!client_enabled) { return; }
+void client_enable() { client_enabled = 1; }
+void client_disable() { client_enabled = 0; }
+int get_client_enabled() { return client_enabled; }
 
-void client_disable() {
-    client_enabled = 0;
-}
-
-int get_client_enabled() {
-    return client_enabled;
-}
 
 int client_sendall(int sd, char *data, int length) {
-    if (!client_enabled) {
-        return 0;
-    }
+    if (!client_enabled) { return 0; }
     int count = 0;
     while (count < length) {
         int n = send(sd, data + count, length, 0);
@@ -56,38 +48,32 @@ int client_sendall(int sd, char *data, int length) {
     return 0;
 }
 
-void client_send(char *data) {
-    if (!client_enabled) {
-        return;
-    }
+void client_send(char *data) { ONLINE_ONLY
     if (client_sendall(sd, data, strlen(data)) == -1) {
         perror("client_sendall");
         exit(1);
     }
 }
 
-void client_version(int version) {
-    if (!client_enabled) {
-        return;
-    }
-    char buffer[1024];
-    snprintf(buffer, 1024, "V,%d\n", version);
-    client_send(buffer);
+#include <stdarg.h>
+void fmt_send(const char* fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+  char buffer[1024];
+  vsnprintf(buffer, 1024, fmt, args);
+  va_end(args);
+  client_send(buffer);
 }
 
-void client_login(const char *username, const char *identity_token) {
-    if (!client_enabled) {
-        return;
-    }
-    char buffer[1024];
-    snprintf(buffer, 1024, "A,%s,%s\n", username, identity_token);
-    client_send(buffer);
-}
+void client_version(int version) { ONLINE_ONLY
+    fmt_send("V,%d\n", version); }
+
+void client_login(const char *username,
+                  const char *identity_token) { ONLINE_ONLY
+    fmt_send("A,%s,%s\n", username, identity_token); }
 
 void client_position(float x, float y, float z, float rx, float ry) {
-    if (!client_enabled) {
-        return;
-    }
+    ONLINE_ONLY
     static float px, py, pz, prx, pry = 0;
     float distance =
         (px - x) * (px - x) +
@@ -99,57 +85,26 @@ void client_position(float x, float y, float z, float rx, float ry) {
         return;
     }
     px = x; py = y; pz = z; prx = rx; pry = ry;
-    char buffer[1024];
-    snprintf(buffer, 1024, "P,%.2f,%.2f,%.2f,%.2f,%.2f\n", x, y, z, rx, ry);
-    client_send(buffer);
+    fmt_send("P,%.2f,%.2f,%.2f,%.2f,%.2f\n", x, y, z, rx, ry);
 }
 
-void client_chunk(int p, int q, int key) {
-    if (!client_enabled) {
-        return;
-    }
-    char buffer[1024];
-    snprintf(buffer, 1024, "C,%d,%d,%d\n", p, q, key);
-    client_send(buffer);
-}
+void client_chunk(int p, int q, int key) { ONLINE_ONLY
+    fmt_send("C,%d,%d,%d\n", p, q, key); }
 
-void client_block(int x, int y, int z, int w) {
-    if (!client_enabled) {
-        return;
-    }
-    char buffer[1024];
-    snprintf(buffer, 1024, "B,%d,%d,%d,%d\n", x, y, z, w);
-    client_send(buffer);
-}
+void client_block(int x, int y, int z, int w) { ONLINE_ONLY
+    fmt_send("B,%d,%d,%d,%d\n", x, y, z, w); }
 
-void client_light(int x, int y, int z, int w) {
-    if (!client_enabled) {
-        return;
-    }
-    char buffer[1024];
-    snprintf(buffer, 1024, "L,%d,%d,%d,%d\n", x, y, z, w);
-    client_send(buffer);
-}
+void client_light(int x, int y, int z, int w) { ONLINE_ONLY
+    fmt_send("L,%d,%d,%d,%d\n", x, y, z, w); }
 
-void client_sign(int x, int y, int z, int face, const char *text) {
-    if (!client_enabled) {
-        return;
-    }
-    char buffer[1024];
-    snprintf(buffer, 1024, "S,%d,%d,%d,%d,%s\n", x, y, z, face, text);
-    client_send(buffer);
-}
+void client_sign(int x, int y, int z, int face, const char *text) { ONLINE_ONLY
+    fmt_send("S,%d,%d,%d,%d,%s\n", x, y, z, face, text); }
 
-void client_talk(const char *text) {
-    if (!client_enabled) {
-        return;
-    }
+void client_talk(const char *text) { ONLINE_ONLY
     if (strlen(text) == 0) {
         return;
     }
-    char buffer[1024];
-    snprintf(buffer, 1024, "T,%s\n", text);
-    client_send(buffer);
+    fmt_send("T,%s\n", text);
 }
 
 char *client_recv() {
@@ -209,10 +164,7 @@ int recv_worker(void *arg) {
     return 0;
 }
 
-void client_connect(char *hostname, int port) {
-    if (!client_enabled) {
-        return;
-    }
+void client_connect(char *hostname, int port) { ONLINE_ONLY
     struct hostent *host;
     struct sockaddr_in address;
     if ((host = gethostbyname(hostname)) == 0) {
@@ -233,10 +185,7 @@ void client_connect(char *hostname, int port) {
     }
 }
 
-void client_start() {
-    if (!client_enabled) {
-        return;
-    }
+void client_start() { ONLINE_ONLY
     running = 1;
     queue = (char *)calloc(QUEUE_SIZE, sizeof(char));
     qsize = 0;
@@ -247,10 +196,7 @@ void client_start() {
     }
 }
 
-void client_stop() {
-    if (!client_enabled) {
-        return;
-    }
+void client_stop() { ONLINE_ONLY
     running = 0;
     close(sd);
     // if (thrd_join(recv_thread, NULL) != thrd_success) {
