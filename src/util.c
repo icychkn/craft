@@ -42,6 +42,7 @@ char *load_file(const char *path) {
     return data;
 }
 
+//extern GLuint gen_buffer(GLsizei size, GLfloat* data);
 GLuint gen_buffer(GLsizei size, GLfloat *data) {
     GLuint buffer;
     glGenBuffers(1, &buffer);

@@ -1,4 +1,6 @@
-#include <GL/glew.h>
+//#include <GL/glew.h>
+#include "gfx.h"
+
 #include <GLFW/glfw3.h>
 #include <math.h>
 #include <stdio.h>
@@ -36,24 +38,24 @@ int chunked(float x) {
     return floorf(roundf(x) / CHUNK_SIZE);
 }
 
-#include "mymachine.h"
-
-float time_of_day() {
+extern float time_of_day();
+/*float time_of_day() {
     #define DAYLIGHT_CYCLE_DISABLED (g->day_length == 0)
     if DAYLIGHT_CYCLE_DISABLED { return 0.5; }
 
-    float data[] = {glfwGetTime(), g->day_length};
-    float* top = data;
-    int insts[] = {DIV, FRACTION, RETURN};
-    cryomach((void*)insts, (void**)&top);
-    return top[0];
+    //float data[] = {glfwGetTime(), g->day_length};
+    //float* top = data;
+    //int insts[] = {DIV, FRACTION, RETURN};
+    //cryomach((void*)insts, (void**)&top);
+    //return top[0];
 
     float t;
     t = glfwGetTime();
     t = t / g->day_length;
     t = t - (int)t;
-    return t;
-}
+    //return t;
+    return time_of_day_at(g->day_length);
+}*/
 
 float get_daylight() {
     float timer = time_of_day();
@@ -2290,6 +2292,7 @@ void reset_model() {
     g->time_changed = 1;
 }
 
+extern void my_gl_init();
 int main(int argc, char **argv) {
     // INITIALIZATION //
     srand(time(NULL));
@@ -2313,9 +2316,10 @@ int main(int argc, char **argv) {
     glfwSetMouseButtonCallback(g->window, on_mouse_button);
     glfwSetScrollCallback(g->window, on_scroll);
 
-    if (glewInit() != GLEW_OK) {
-        return -1;
-    }
+    my_gl_init();
+    //if (glewInit() != GLEW_OK) {
+    //    return -1;
+    //}
 
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);

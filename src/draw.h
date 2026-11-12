@@ -1,6 +1,8 @@
 #ifndef _draw_
 #define _draw_
-#include <GL/glew.h>
+//#include <GL/glew.h>
+#include "gfx.h"
+
 #include "structs.h"
 
 void draw_triangles_3d_ao(Attrib *attrib, GLuint buffer, int count);

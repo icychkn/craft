@@ -1,7 +1,9 @@
 #ifndef STRUCTS
 #define STRUCTS
 
-#include <GL/glew.h>
+//#include <GL/glew.h>
+#include "gfx.h"
+
 #include <GLFW/glfw3.h>
 #include "config.h"
 #include "map.h"
@@ -61,12 +63,9 @@ typedef struct {
 } Attrib;
 
 typedef struct {
-  GLFWwindow *window;
-  Worker workers[WORKERS];
-  Chunk chunks[MAX_CHUNKS];
+  unsigned int day_length;
   int chunk_count,
       create_radius, render_radius, delete_radius, sign_radius;
-  Player players[MAX_PLAYERS];
   int player_count, typing;
   char typing_buffer[MAX_TEXT_LENGTH];
   int message_index;
@@ -80,8 +79,11 @@ typedef struct {
   char db_path[MAX_PATH_LENGTH];
   char server_addr[MAX_ADDR_LENGTH];
   int server_port;
-  unsigned int day_length;
   int time_changed;
+  GLFWwindow *window;
+  Player players[MAX_PLAYERS];
+  Chunk chunks[MAX_CHUNKS];
   Block block0, block1, copy0, copy1;
+  Worker workers[WORKERS];
 } Model;
 #endif

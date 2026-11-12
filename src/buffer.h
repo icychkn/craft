@@ -1,14 +1,16 @@
 #ifndef _gen_buffer_
 #define _gen_buffer_
 
-#include <GL/glew.h>
+//#include <GL/glew.h>
+#include "gfx.h"
+
 #include <string.h>
 #include "cube.h"
 #include "global.h"
 #include "util.h"
 
-GLuint gen_crosshair_buffer();
-GLuint gen_wireframe_buffer(float x, float y, float z, float n);
+extern GLuint gen_crosshair_buffer();
+extern GLuint gen_wireframe_buffer(float x, float y, float z, float n);
 GLuint gen_sky_buffer();
 GLuint gen_cube_buffer(float x, float y, float z, float n, int w);
 GLuint gen_plant_buffer(float x, float y, float z, float n, int w);

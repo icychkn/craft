@@ -1,22 +1,5 @@
 #include "buffer.h"
 
-GLuint gen_crosshair_buffer() {
-  int x = g->width / 2;
-  int y = g->height / 2;
-  int p = 10 * g->scale;
-  float data[] = {
-    x, y - p, x, y + p,
-    x - p, y, x + p, y
-  };
-  return gen_buffer(sizeof(data), data);
-}
-
-GLuint gen_wireframe_buffer(float x, float y, float z, float n) {
-    float data[72];
-    make_cube_wireframe(data, x, y, z, n);
-    return gen_buffer(sizeof(data), data);
-}
-
 GLuint gen_sky_buffer() {
     float data[12288];
     make_sphere(data, 1, 3);
