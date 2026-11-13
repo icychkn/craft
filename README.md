@@ -1,7 +1,8 @@
 ## Craft
 
-Minecraft clone for Windows, Mac OS X and Linux. Just a few thousand lines of C using modern OpenGL (shaders). Online multiplayer support is included using a Python-based server.
+This is a fork of a Minecraft clone targeting Linux only for now.
 
+Original project's website (not affiliated with this repo):
 http://www.michaelfogleman.com/craft/
 
 ![Screenshot](https://i.imgur.com/SH7wcas.png)
@@ -11,15 +12,18 @@ http://www.michaelfogleman.com/craft/
 This fork is for personal experimentation, mainly to learn how much the original
 codebase can be factored and simplified.
 
-Build system is stripped down to a single shell script targeting Linux with
-OpenGL, GLFW, and GLEW using tcc as the compiler.
+The latest experiment is porting the source to C3 without breaking the build.
+The toughest part was figuring out how to call OpenGL functions from both C3
+and C. I found I can define @exported C3 glue functions for its OpenGL library
+that can be externed in C source. This let me remove GLEW entirely as a bonus.
 
-The local GLFW, GLEW, and sqlite libraries are replaced by system-wide versions.
-
-Due to issues with TCC neither including an execstack or disabling it, gcc must
-be used to build the server's world binary so Python's CDLL function may use it.
+(I'm still learning C3, C, and Git, so apologies for the messy source code and
+sporadic commits)
 
 The server python script has been updated to Python 3.
+
+The rest of this README is mostly unchanged, there's a lot of stuff for me to
+go through and update.
 
 ### Features
 
@@ -30,52 +34,6 @@ The server python script has been updated to Python 3.
 * Day / night cycles and a textured sky dome.
 * World changes persisted in a sqlite3 database.
 * Multiplayer support!
-
-### Download
-
-Mac and Windows binaries are available on the website.
-
-http://www.michaelfogleman.com/craft/
-
-See below to run from source.
-
-### Install Dependencies
-
-### Linux (Arch)
-
-  sudo pacman -S glew glfw sqlite tcc
-  (note: unknown why xorg-dev was included in original README)
-
-### Compile and Run
-
-  Once you have the dependencies (see above), run the following commands in your
-  terminal.
-
-```bash
-    git clone https://github.com/icychkn/craft.git
-    cd craft
-```
-
-#### Client
-
-```bash
-    sh ./build.sh
-    ./craft
-```
-
-#### Server
-
-The server is written in Python but requires a compiled DLL so it can perform
-the terrain generation just like the client.
-
-```bash
-    sh ./build-server.py
-    python3 ./server.py [HOST] [PORT]
-```
-
-### Multiplayer
-
-After many years, craft.michaelfogleman.com has been taken down. See the [Server](#server) section for info on self-hosting.
 
 #### Client
 
@@ -210,8 +168,8 @@ http://0fps.wordpress.com/2013/07/03/ambient-occlusion-for-minecraft-like-worlds
 
 #### Dependencies
 
-* GLEW is used for managing OpenGL extensions across platforms.
-* GLFW is used for cross-platform window management.
+* C3's compiler.
+* GLFW is used for window management.
 * lodepng is used for loading PNG textures.
 * sqlite3 is used for saving the blocks added / removed by the user.
 * tinycthread is used for cross-platform threading.
