@@ -855,7 +855,7 @@ void generate_chunk(Chunk *chunk, WorkerItem *item) {
     chunk->maxy = item->maxy;
     chunk->faces = item->faces;
     del_buffer(chunk->buffer);
-    chunk->buffer = gen_faces(10, item->faces, item->data);
+    chunk->buffer = ICY_create_faces(10, item->faces, item->data);
     gen_sign_buffer(chunk);
 }
 
@@ -2293,7 +2293,9 @@ void reset_model() {
 }
 
 extern void my_gl_init();
+extern void my_main();
 int main(int argc, char **argv) {
+
     // INITIALIZATION //
     srand(time(NULL));
     rand();
@@ -2317,6 +2319,7 @@ int main(int argc, char **argv) {
     glfwSetScrollCallback(g->window, on_scroll);
 
     my_gl_init();
+    my_main();
     //if (glewInit() != GLEW_OK) {
     //    return -1;
     //}
@@ -2368,12 +2371,17 @@ int main(int argc, char **argv) {
     Attrib sky_attrib = {0};
     GLuint program;
 
-    program = load_program(
-        "shaders/block_vertex.glsl", "shaders/block_fragment.glsl");
-    block_attrib.program = program;
+    extern GLuint ICY_program_block;
+    program = ICY_program_block;
+    block_attrib.program = ICY_program_block;
+
     block_attrib.position = glGetAttribLocation(program, "position");
     block_attrib.normal = glGetAttribLocation(program, "normal");
     block_attrib.uv = glGetAttribLocation(program, "uv");
+
+    extern void ICY_init_chunk_vao(Attrib* attrib);
+    ICY_init_chunk_vao(&block_attrib);
+
     block_attrib.matrix = glGetUniformLocation(program, "matrix");
     block_attrib.sampler = glGetUniformLocation(program, "sampler");
     block_attrib.extra1 = glGetUniformLocation(program, "sky_sampler");
@@ -2383,24 +2391,24 @@ int main(int argc, char **argv) {
     block_attrib.camera = glGetUniformLocation(program, "camera");
     block_attrib.timer = glGetUniformLocation(program, "timer");
 
-    program = load_program(
-        "shaders/line_vertex.glsl", "shaders/line_fragment.glsl");
-    line_attrib.program = program;
+    extern GLuint ICY_program_line;
+    program = ICY_program_line;
+    line_attrib.program = ICY_program_line;
     line_attrib.position = glGetAttribLocation(program, "position");
     line_attrib.matrix = glGetUniformLocation(program, "matrix");
 
-    program = load_program(
-        "shaders/text_vertex.glsl", "shaders/text_fragment.glsl");
-    text_attrib.program = program;
+    extern GLuint ICY_program_text;
+    program = ICY_program_text;
+    text_attrib.program = ICY_program_text;
     text_attrib.position = glGetAttribLocation(program, "position");
     text_attrib.uv = glGetAttribLocation(program, "uv");
     text_attrib.matrix = glGetUniformLocation(program, "matrix");
     text_attrib.sampler = glGetUniformLocation(program, "sampler");
     text_attrib.extra1 = glGetUniformLocation(program, "is_sign");
 
-    program = load_program(
-        "shaders/sky_vertex.glsl", "shaders/sky_fragment.glsl");
-    sky_attrib.program = program;
+    extern GLuint ICY_program_sky;
+    program = ICY_program_sky;
+    sky_attrib.program = ICY_program_sky;
     sky_attrib.position = glGetAttribLocation(program, "position");
     sky_attrib.normal = glGetAttribLocation(program, "normal");
     sky_attrib.uv = glGetAttribLocation(program, "uv");
@@ -2547,7 +2555,7 @@ int main(int argc, char **argv) {
             int face_count = render_chunks(&block_attrib, player);
             render_signs(&text_attrib, player);
             render_sign(&text_attrib, player);
-            render_players(&block_attrib, player);
+            //render_players(&block_attrib, player);
             if (SHOW_WIREFRAME) {
                 render_wireframe(&line_attrib, player);
             }
