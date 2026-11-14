@@ -1,10 +1,11 @@
 module util;
 
-import std::io, std::os;
+import std::io, std::math, std::os, std::math::random;
 
 import glfw;
 import opengl::gl;
 
+import config;
 import shaders;
 
 fn void my_gl_init() @export("my_gl_init") {
@@ -56,3 +57,32 @@ fn GLfloat* malloc_faces(int components, int faces) @export("malloc_faces"){
   return malloc(GLfloat::size * 6 * components * faces);
 }
 
+
+fn int chunked(float x) @export("chunked") {
+  return (int)(math::floor(math::round(x) / config::CHUNK_SIZE));
+}
+
+fn int rand_int(int n) @export("rand_int") {
+  return random::rand(n);
+}
+
+fn double rand_double() @export("rand_double") {
+  return (double)random::rand(1001) / 1000.0;
+}
+
+struct FPSContainer {
+  uint fps;
+  uint frames;
+  double since;
+}
+
+fn void update_fps(FPSContainer* fps) @export("update_fps") {
+  fps.frames++;
+  double now = glfw::getTime();
+  double elapsed = now - fps.since;
+  if (elapsed >= 1) {
+    fps.fps = (uint)math::round(fps.frames / elapsed);
+    fps.frames = 0;
+    fps.since = now;
+  }
+}

@@ -3,6 +3,8 @@ module ffi;
 import std::io;
 import opengl::gl;
 import glfw;
+
+import config;
 /*struct WorkerItem {
   int p; int q; int load;
   Map* block_maps[3][3]; Map* light_maps[3][3];
@@ -10,6 +12,7 @@ import glfw;
   GLfloat* data;  
 }
 
+// no idea how I'm going to interface with pthread's structs.
 struct Worker {
   int index; int state;
   thr_t thrd;
@@ -19,9 +22,10 @@ struct Worker {
 }*/
 /*
 struct Player { }
+*/
 struct Block {
   int x; int y; int z; int w;
-};*/
+}
 
 struct MapEntry {
   uint value;
@@ -55,17 +59,8 @@ struct Chunk {
 
 alias Worker = void*;
 alias Player = void*;
-alias Block = void*;
 
-const MAX_CHUNKS = 8192;
-const MAX_PLAYERS = 128;
-const WORKERS = 4;
-const MAX_MESSAGES = 4;
-const MAX_NAME_LENGTH = 32;
-const MAX_TEXT_LENGTH = 256;
-const MAX_PATH_LENGTH = 256;
-const MAX_ADDR_LENGTH = 256;
-
+// rearranged struct so I can delay interfacing with the more complicated structs.
 struct Model {
   uint day_length;
   int chunk_count;
@@ -75,22 +70,22 @@ struct Model {
   int sign_radius;
   int player_count;
   int typing;
-  char[MAX_TEXT_LENGTH] typing_buffer;
+  char[config::MAX_TEXT_LENGTH] typing_buffer;
   int message_index;
-  char[MAX_MESSAGES][MAX_TEXT_LENGTH] messages;
+  char[config::MAX_MESSAGES][config::MAX_TEXT_LENGTH] messages;
   int width; int height;
   int observe1; int observe2;
   int flying; int item_index;
   int scale; int ortho;
   float fov;
   int suppress_char; int mode; int mode_changed;
-  char[MAX_PATH_LENGTH] db_path;
-  char[MAX_ADDR_LENGTH] server_addr;
+  char[config::MAX_PATH_LENGTH] db_path;
+  char[config::MAX_ADDR_LENGTH] server_addr;
   int server_port;
   int time_changed;
   GlfwWindow* window;
-  Player[MAX_PLAYERS] players;
-  Chunk[MAX_CHUNKS] chunks;
+  Player[config::MAX_PLAYERS] players;
+  Chunk[config::MAX_CHUNKS] chunks;
   Block block0; Block block1; Block copy0; Block copy1;
   Worker[] workers;
 }

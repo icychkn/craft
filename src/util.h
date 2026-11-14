@@ -26,9 +26,9 @@ typedef struct {
     double since;
 } FPS;
 
-int rand_int(int n);
-double rand_double();
-void update_fps(FPS *fps);
+extern int rand_int(int n);
+extern double rand_double();
+extern void update_fps(FPS *fps);
 
 extern GLuint gen_buffer(GLsizei size, GLfloat *data);
 extern GLuint ICY_create_faces(int components, int faces, GLfloat* data);

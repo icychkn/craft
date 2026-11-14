@@ -6,42 +6,6 @@
 #include "matrix.h"
 #include "util.h"
 
-int rand_int(int n) {
-    int result;
-    while (n <= (result = rand() / (RAND_MAX / n)));
-    return result;
-}
-
-double rand_double() {
-    return (double)rand() / (double)RAND_MAX;
-}
-
-void update_fps(FPS *fps) {
-    fps->frames++;
-    double now = glfwGetTime();
-    double elapsed = now - fps->since;
-    if (elapsed >= 1) {
-        fps->fps = round(fps->frames / elapsed);
-        fps->frames = 0;
-        fps->since = now;
-    }
-}
-
-char *load_file(const char *path) {
-    FILE *file = fopen(path, "rb");
-    if (!file) {
-        fprintf(stderr, "fopen %s failed: %d %s\n", path, errno, strerror(errno));
-        exit(1);
-    }
-    fseek(file, 0, SEEK_END);
-    int length = ftell(file);
-    rewind(file);
-    char *data = calloc(length + 1, sizeof(char));
-    fread(data, 1, length, file);
-    fclose(file);
-    return data;
-}
-
 void flip_image_vertical(
     unsigned char *data, unsigned int width, unsigned int height)
 {

@@ -34,50 +34,10 @@
 
 #include "global.h"
 
-int chunked(float x) {
-    return floorf(roundf(x) / CHUNK_SIZE);
-}
-
+extern int chunked(float x);
 extern float time_of_day();
-/*float time_of_day() {
-    #define DAYLIGHT_CYCLE_DISABLED (g->day_length == 0)
-    if DAYLIGHT_CYCLE_DISABLED { return 0.5; }
 
-    //float data[] = {glfwGetTime(), g->day_length};
-    //float* top = data;
-    //int insts[] = {DIV, FRACTION, RETURN};
-    //cryomach((void*)insts, (void**)&top);
-    //return top[0];
-
-    float t;
-    t = glfwGetTime();
-    t = t / g->day_length;
-    t = t - (int)t;
-    //return t;
-    return time_of_day_at(g->day_length);
-}*/
-
-float get_daylight() {
-    float timer = time_of_day();
-    if (timer < 0.5) {
-        // 0 =< timer < 0.5
-        // why 25 instead of 15?
-        float t = (timer - 0.25) * 100;
-        // -25 =< t < 25
-        return 1 / (1 + powf(2, -t));
-        // brightness at midnight     brightness at noon
-        // 2.98e-8 < returned value < 1.0
-    }
-    else {
-        // 0.5 =< timer < 1.0
-        float t = (timer - 0.85) // -0.35 =< ? < 0.15
-                  * 100;
-        // -35 =< t < 15
-        return 1 - 1 / (1 + powf(2, -t));
-        // brightness at noon      brightness at midnight
-        // 0.99 > returned value > 3.05e-05
-    }
-}
+extern float get_daylight();
 
 int get_scale_factor() {
     int window_width, window_height;
@@ -2297,8 +2257,8 @@ extern void my_main();
 int main(int argc, char **argv) {
 
     // INITIALIZATION //
-    srand(time(NULL));
-    rand();
+    //srand(time(NULL));
+    //rand();
 
     // WINDOW INITIALIZATION //
     if (!glfwInit()) {
