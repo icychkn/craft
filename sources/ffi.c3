@@ -20,9 +20,17 @@ struct Worker {
   cnd_t cnd;
   WorkerItem item;
 }*/
-/*
-struct Player { }
-*/
+
+alias State = void*;
+struct Player {
+  int id;
+  char[config::MAX_NAME_LENGTH] name;
+  GLuint buffer;
+  State state;
+  State state1;
+  State state2;
+}
+
 struct Block {
   int x; int y; int z; int w;
 }
@@ -58,7 +66,6 @@ struct Chunk {
 }
 
 alias Worker = void*;
-alias Player = void*;
 
 // rearranged struct so I can delay interfacing with the more complicated structs.
 struct Model {

@@ -51,8 +51,8 @@ typedef struct {
 typedef struct {
   int id;
   char name[MAX_NAME_LENGTH];
-  State state, state1, state2;
   GLuint buffer;
+  State state, state1, state2;
 } Player;
 
 typedef struct {

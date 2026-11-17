@@ -9,7 +9,7 @@
   "no-entry": true,
   "cc": "gcc",
   "cflags": "-fPIE -fcommon",
-  "c-sources": [ "deps/lodepng/lodepng.c", "deps/tinycthread/tinycthread.c", "deps/noise/noise.c", "src/main.c", "src/map.c", "src/map.h", "src/matrix.c", "src/matrix.h", "src/db.c", "src/db.h", "src/draw.c", "src/draw.h", "src/global.c", "src/global.h", "src/item.c", "src/item.h", "src/buffer.c", "src/buffer.h", "src/client.c", "src/client.h", "src/config.h", "src/cube.c", "src/cube.h", "src/ring.c", "src/ring.h", "src/sign.c", "src/sign.h", "src/structs.h", "src/util.c", "src/util.h", "src/world.c", "src/world.h" ],
+  "c-sources": [ "deps/lodepng/lodepng.c", "deps/tinycthread/tinycthread.c", "deps/noise/noise.c", "src/main.c", "src/map.c", "src/map.h", "src/matrix.c", "src/matrix.h", "src/db.c", "src/db.h", "src/draw.h", "src/global.c", "src/global.h", "src/item.c", "src/item.h", "src/buffer.c", "src/buffer.h", "src/client.c", "src/client.h", "src/config.h", "src/cube.c", "src/cube.h", "src/ring.c", "src/ring.h", "src/sign.c", "src/sign.h", "src/structs.h", "src/util.c", "src/util.h", "src/world.c", "src/world.h" ],
   "c-include-dirs": [ "deps/lodepng", "deps/tinycthread", "deps/noise" ],
   "sources": [ "./sources/main.c3",
     "./sources/buffer.c3",
