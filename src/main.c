@@ -1315,7 +1315,7 @@ int render_chunks(Attrib *attrib, Player *player) {
         {
             continue;
         }
-        draw_chunk(attrib, chunk);
+        draw_chunk(chunk);
         result += chunk->faces;
     }
     return result;
@@ -1390,7 +1390,7 @@ void render_players(Attrib *attrib, Player *player) {
     for (int i = 0; i < g->player_count; i++) {
         Player *other = g->players + i;
         if (other != player) {
-            draw_player(attrib, other);
+            draw_player(other);
         }
     }
 }
@@ -1457,7 +1457,7 @@ void render_item(Attrib *attrib) {
     }
     else {
         GLuint buffer = gen_cube_buffer(0, 0, 0, 0.5, w);
-        draw_cube(attrib, buffer);
+        draw_cube(buffer);
         del_buffer(buffer);
     }
 }
@@ -1474,7 +1474,7 @@ void render_text(
     int length = strlen(text);
     x -= n * justify * (length - 1) / 2;
     GLuint buffer = gen_text_buffer(x, y, n, text);
-    draw_text(attrib, buffer, length);
+    draw_text(buffer, length);
     del_buffer(buffer);
 }
 
@@ -2362,6 +2362,9 @@ int main(int argc, char **argv) {
     text_attrib.program = ICY_program_text;
     text_attrib.position = glGetAttribLocation(program, "position");
     text_attrib.uv = glGetAttribLocation(program, "uv");
+
+    extern void ICY_init_text_vao(Attrib* attrib);
+    ICY_init_text_vao(&text_attrib);
     text_attrib.matrix = glGetUniformLocation(program, "matrix");
     text_attrib.sampler = glGetUniformLocation(program, "sampler");
     text_attrib.extra1 = glGetUniformLocation(program, "is_sign");
