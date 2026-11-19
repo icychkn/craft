@@ -1,4 +1,3 @@
-//#include <GL/glew.h>
 #include "gfx.h"
 
 #include <GLFW/glfw3.h>
@@ -2255,11 +2254,6 @@ void reset_model() {
 extern void my_gl_init();
 extern void my_main();
 int main(int argc, char **argv) {
-
-    // INITIALIZATION //
-    //srand(time(NULL));
-    //rand();
-
     // WINDOW INITIALIZATION //
     if (!glfwInit()) {
         return -1;
@@ -2280,9 +2274,6 @@ int main(int argc, char **argv) {
 
     my_gl_init();
     my_main();
-    //if (glewInit() != GLEW_OK) {
-    //    return -1;
-    //}
 
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);

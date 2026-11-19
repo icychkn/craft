@@ -1,7 +1,6 @@
 #ifndef STRUCTS
 #define STRUCTS
 
-//#include <GL/glew.h>
 #include "gfx.h"
 
 #include <GLFW/glfw3.h>

@@ -25,37 +25,8 @@ typedef char GLcharARB;
 typedef typeof((int*)nullptr - (int*)nullptr) ptrdiff_t;
 typedef ptrdiff_t GLsizeiptr;
 
-extern void glBindBuffer(GLenum target, GLuint buffer);
-extern void glEnableVertexAttribArray(GLuint index);
-extern void glDisableVertexAttribArray(GLuint index);
-extern void glVertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid* pointer);
-extern void glDrawArrays(GLenum mode, GLint first, GLsizei count);
-
 extern GLint glGetUniformLocation(GLuint program, GLchar* name);
 extern GLint glGetAttribLocation(GLuint program, GLchar* name);
-
-extern void glActiveTexture(GLenum texture);
-extern void glBindTexture(GLenum target, GLuint texture);
-extern void glBlendFunc(GLenum sfactor, GLenum dfactor);
-
-extern void glBufferData(GLenum target, GLsizeiptr size, GLvoid* data, GLenum usage);
-extern void glClear(GLbitfield mask);
-extern void glClearColor(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
-extern void glDeleteBuffers(GLsizei n, GLuint* buffers);
-extern void glEnable(GLenum cap);
-extern void glDisable(GLenum cap);
-
-extern void glGenBuffers(GLsizei n, GLuint* buffers);
-extern void glGenTextures(GLsizei n, GLuint* textures);
-
-extern void glLineWidth(GLfloat width);
-
-extern void glLogicOp(GLenum opcode);
-extern void glPolygonOffset(GLfloat factor, GLfloat units);
-extern void glScissor(GLint x, GLint y, GLsizei width, GLsizei height);
-extern void glTexImage2D(GLenum target, GLint level, GLint internalFormat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid* data);
-
-extern void glTexParameteri(GLenum target, GLenum pname, GLint param);
 
 extern void glUniform1f(GLint location, GLfloat v0);
 extern void glUniform1i(GLint location, GLint v0);
@@ -63,6 +34,5 @@ extern void glUniform3f(GLint location, GLfloat v0, GLfloat v1, GLfloat v2);
 extern void glUniformMatrix4fv(GLint location, GLsizei count, GLboolean transpose, GLfloat* value);
 
 extern void glUseProgram(GLuint program);
-extern void glViewport(GLint x, GLint y, GLsizei width, GLsizei height);
 
 #endif

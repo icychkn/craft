@@ -1,7 +1,6 @@
 #ifndef _gen_buffer_
 #define _gen_buffer_
 
-//#include <GL/glew.h>
 #include "gfx.h"
 
 #include <string.h>
