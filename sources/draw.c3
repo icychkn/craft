@@ -85,49 +85,32 @@ fn void draw_chunk(Chunk* chunk) @export("draw_chunk") {
   draw_triangles_3d_ao(chunk.buffer, chunk.faces * 6);
 }
 
-fn void draw_triangles_3d_text(Attrib* attrib, GLuint buffer, int count) {
-  gl::bindBuffer(gl::GL_ARRAY_BUFFER, buffer);
+VertexArrayObject vao_3d;
+fn void init_vao_3d(Attrib* attrib) @export("ICY_init_sky_vao") {
+  gl::createVertexArrays(1, &vao_3d);
 
-  gl::enableVertexAttribArray(attrib.position);
-  gl::enableVertexAttribArray(attrib.uv);
+  gl::enableVertexArrayAttrib(vao_3d, attrib.position);
+  gl::vertexArrayAttribFormat(vao_3d, attrib.position, 3, gl::GL_FLOAT, gl::GL_FALSE, 0);
+  gl::vertexArrayAttribBinding(vao_3d, attrib.position, 0);
 
-  gl::vertexAttribPointer(attrib.position, 3, gl::GL_FLOAT, gl::GL_FALSE, float::size * 5, (void*)0);
-  gl::vertexAttribPointer(attrib.uv, 2, gl::GL_FLOAT, gl::GL_FALSE, float::size * 5, (void*)(float::size * 3));
+  gl::enableVertexArrayAttrib(vao_3d, attrib.normal);
+  gl::vertexArrayAttribFormat(vao_3d, attrib.normal, 3, gl::GL_FLOAT, gl::GL_FALSE, (GLfloat::size * 3));
+  gl::vertexArrayAttribBinding(vao_3d, attrib.normal, 0);
 
-  gl::drawArrays(gl::GL_TRIANGLES, 0, count);
-
-  gl::disableVertexAttribArray(attrib.position);
-  gl::disableVertexAttribArray(attrib.uv);
-
-  gl::bindBuffer(gl::GL_ARRAY_BUFFER, 0);
+  gl::enableVertexArrayAttrib(vao_3d, attrib.uv);
+  gl::vertexArrayAttribFormat(vao_3d, attrib.uv, 4, gl::GL_FLOAT, gl::GL_FALSE, (GLfloat::size * 6));
+  gl::vertexArrayAttribBinding(vao_3d, attrib.uv, 0);
 }
 
-fn void draw_triangles_3d(Attrib* attrib, GLuint buffer, int count) @export("draw_triangles_3d") {
-  gl::bindBuffer(gl::GL_ARRAY_BUFFER, buffer);
-
-  gl::enableVertexAttribArray(attrib.position);
-  // the normal attribute is being culled by the OpenGL shader compiler, the
-  // debug callback above kept spamming console about the invalid value (-1)
-  // being passed to these calls.
-  //gl::enableVertexAttribArray(attrib.normal);
-  gl::enableVertexAttribArray(attrib.uv);
-
-  gl::vertexAttribPointer(attrib.position, 3, gl::GL_FLOAT, gl::GL_FALSE, GLfloat::size * 8, (void*)0);
-  // no idea if this stride will cause issues. The clouds look alright though,
-  // so maybe its okay?
-  //gl::vertexAttribPointer(attrib.normal, 3, gl::GL_FLOAT, gl::GL_FALSE, float::size * 8, (void*)(float::size * 3));
-  gl::vertexAttribPointer(attrib.uv, 2, gl::GL_FLOAT, gl::GL_FALSE, GLfloat::size * 8, (void*)(GLfloat::size * 6));
-
+fn void draw_triangles_3d(GLuint buffer, int count) @export("draw_triangles_3d") {
+  gl::bindVertexArray(vao_3d);
+  gl::vertexArrayVertexBuffer(vao_3d, 0, buffer, 0, GLfloat::size * 8);
   gl::drawArrays(gl::GL_TRIANGLES, 0, count);
-
-  gl::disableVertexAttribArray(attrib.position);
-  //gl::disableVertexAttribArray(attrib.normal);
-  gl::disableVertexAttribArray(attrib.uv);
-
-  gl::bindBuffer(gl::GL_ARRAY_BUFFER, 0);
+  gl::bindVertexArray(0);
 }
 
 VertexArrayObject text_vao;
+VertexArrayObject text_vao_3d;
 fn void init_text_vao(Attrib* attrib) @export("ICY_init_text_vao") {
   gl::createVertexArrays(1, &text_vao);
 
@@ -138,11 +121,28 @@ fn void init_text_vao(Attrib* attrib) @export("ICY_init_text_vao") {
   gl::enableVertexArrayAttrib(text_vao, attrib.uv);
   gl::vertexArrayAttribFormat(text_vao, attrib.uv, 2, gl::GL_FLOAT, gl::GL_FALSE, (GLfloat::size * 2));
   gl::vertexArrayAttribBinding(text_vao, attrib.uv, 0);
+
+  gl::createVertexArrays(1, &text_vao_3d);
+
+  gl::enableVertexArrayAttrib(text_vao_3d, attrib.position);
+  gl::vertexArrayAttribFormat(text_vao_3d, attrib.position, 3, gl::GL_FLOAT, gl::GL_FALSE, 0);
+  gl::vertexArrayAttribBinding(text_vao_3d, attrib.position, 0);
+
+  gl::enableVertexArrayAttrib(text_vao_3d, attrib.uv);
+  gl::vertexArrayAttribFormat(text_vao_3d, attrib.uv, 2, gl::GL_FLOAT, gl::GL_FALSE, (GLfloat::size * 3));
+  gl::vertexArrayAttribBinding(text_vao_3d, attrib.uv, 0);
 }
 
 fn void draw_triangles_2d(GLuint buffer, int count) {
   gl::bindVertexArray(text_vao);
   gl::vertexArrayVertexBuffer(text_vao, 0, buffer, 0, GLfloat::size * 4);
+  gl::drawArrays(gl::GL_TRIANGLES, 0, count);
+  gl::bindVertexArray(0);
+}
+
+fn void draw_triangles_3d_text(GLuint buffer, int count) {
+  gl::bindVertexArray(text_vao_3d);
+  gl::vertexArrayVertexBuffer(text_vao_3d, 0, buffer, 0, GLfloat::size * 5);
   gl::drawArrays(gl::GL_TRIANGLES, 0, count);
   gl::bindVertexArray(0);
 }
@@ -176,20 +176,18 @@ fn void draw_player(Player* player) @export("draw_player") {
   draw_cube(player.buffer);
 }
 
-fn void draw_plant(Attrib* attrib, GLuint buffer) @export("draw_plant") {
-  // don't know why the original code just early returned
-  //draw_item(attrib, buffer, 24);
+fn void draw_plant(GLuint buffer) @export("draw_plant") {
+  draw_item(buffer, 24);
 }
-fn void draw_signs(Attrib* attrib, Chunk* chunk) @export("draw_signs") {
-  // this was also early returned in the original code, see draw_plant
-  //gl::enable(gl::GL_POLYGON_OFFSET_FILL);
-  //gl::polygonOffset(-8, -1024);
-  //draw_triangles_3d_text(attrib, chunk.sign_buffer, chunk.sign_faces * 6);
-  //gl::disable(gl::GL_POLYGON_OFFSET_FILL);
-}
-fn void draw_sign(Attrib* attrib, GLuint buffer, int length) @export("draw_sign") {
+fn void draw_signs(Chunk* chunk) @export("draw_signs") {
   gl::enable(gl::GL_POLYGON_OFFSET_FILL);
   gl::polygonOffset(-8, -1024);
-  draw_triangles_3d_text(attrib, buffer, length * 6);
+  draw_triangles_3d_text(chunk.sign_buffer, chunk.sign_faces * 6);
+  gl::disable(gl::GL_POLYGON_OFFSET_FILL);
+}
+fn void draw_sign(GLuint buffer, int length) @export("draw_sign") {
+  gl::enable(gl::GL_POLYGON_OFFSET_FILL);
+  gl::polygonOffset(-8, -1024);
+  draw_triangles_3d_text(buffer, length * 6);
   gl::disable(gl::GL_POLYGON_OFFSET_FILL);
 }

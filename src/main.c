@@ -1345,7 +1345,7 @@ void render_signs(Attrib *attrib, Player *player) {
         {
             continue;
         }
-        draw_signs(attrib, chunk);
+        draw_signs(chunk);
     }
 }
 
@@ -1372,7 +1372,7 @@ void render_sign(Attrib *attrib, Player *player) {
     GLfloat *data = malloc_faces(5, strlen(text));
     int length = _gen_sign_buffer(data, x, y, z, face, text);
     GLuint buffer = gen_faces(5, length, data);
-    draw_sign(attrib, buffer, length);
+    draw_sign(buffer, length);
     del_buffer(buffer);
 }
 
@@ -1405,7 +1405,7 @@ void render_sky(Attrib *attrib, Player *player, GLuint buffer) {
     glUniformMatrix4fv(attrib->matrix, 1, GL_FALSE, matrix);
     glUniform1i(attrib->sampler, 2);
     glUniform1f(attrib->timer, time_of_day());
-    draw_triangles_3d(attrib, buffer, 512 * 3);
+    draw_triangles_3d(buffer, 512 * 3);
 }
 
 void render_wireframe(Attrib *attrib, Player *player) {
@@ -1452,7 +1452,7 @@ void render_item(Attrib *attrib) {
     int w = items[g->item_index];
     if (is_plant(w)) {
         GLuint buffer = gen_plant_buffer(0, 0, 0, 0.5, w);
-        draw_plant(attrib, buffer);
+        draw_plant(buffer);
         del_buffer(buffer);
     }
     else {
@@ -2375,6 +2375,10 @@ int main(int argc, char **argv) {
     sky_attrib.position = glGetAttribLocation(program, "position");
     sky_attrib.normal = glGetAttribLocation(program, "normal");
     sky_attrib.uv = glGetAttribLocation(program, "uv");
+
+    extern void ICY_init_sky_vao(Attrib* attrib);
+    ICY_init_sky_vao(&sky_attrib);
+
     sky_attrib.matrix = glGetUniformLocation(program, "matrix");
     sky_attrib.sampler = glGetUniformLocation(program, "sampler");
     sky_attrib.timer = glGetUniformLocation(program, "timer");
