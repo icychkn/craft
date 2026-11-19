@@ -2028,21 +2028,6 @@ void on_mouse_button(GLFWwindow *window, int button, int action, int mods) {
     }
 }
 
-void create_window() {
-    int window_width = WINDOW_WIDTH;
-    int window_height = WINDOW_HEIGHT;
-    GLFWmonitor *monitor = NULL;
-    if (FULLSCREEN) {
-        int mode_count;
-        monitor = glfwGetPrimaryMonitor();
-        const GLFWvidmode *modes = glfwGetVideoModes(monitor, &mode_count);
-        window_width = modes[mode_count - 1].width;
-        window_height = modes[mode_count - 1].height;
-    }
-    g->window = glfwCreateWindow(
-        window_width, window_height, "Craft", monitor, NULL);
-}
-
 void handle_mouse_input() {
     int exclusive =
         glfwGetInputMode(g->window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED;
@@ -2254,27 +2239,14 @@ void reset_model() {
 extern void my_gl_init();
 extern void my_main();
 int main(int argc, char **argv) {
-    // WINDOW INITIALIZATION //
-    if (!glfwInit()) {
-        return -1;
-    }
-    create_window();
-    if (!g->window) {
-        glfwTerminate();
-        return -1;
-    }
+    my_main();
 
-    glfwMakeContextCurrent(g->window);
-    glfwSwapInterval(VSYNC);
-    glfwSetInputMode(g->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetKeyCallback(g->window, on_key);
     glfwSetCharCallback(g->window, on_char);
     glfwSetMouseButtonCallback(g->window, on_mouse_button);
     glfwSetScrollCallback(g->window, on_scroll);
 
-    my_gl_init();
-    my_main();
-
+    // I'm not sure why these are working despite not being in the glue code
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
     glLogicOp(GL_INVERT);

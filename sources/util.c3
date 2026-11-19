@@ -6,16 +6,6 @@ import glfw;
 import opengl::gl;
 
 import config;
-import shaders;
-
-fn void my_gl_init() @export("my_gl_init") {
-  if (catch excuse = opengl::init((GLLoadFn)&glfw::getProcAddress)) {
-    io::printn("Failed to load OpenGL");
-    os::exit(-1);
-  }
-
-  shaders::init();
-}
 
 fn GLuint gen_buffer(GLsizei size, GLfloat* data) @export("gen_buffer") {
   GLuint buffer;
